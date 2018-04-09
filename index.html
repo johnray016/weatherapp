@@ -1,0 +1,182 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Weather App</title>
+     <!-- Compiled and minified CSS -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css">
+     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+     <link href="https://fonts.googleapis.com/css?family=Carrois+Gothic+SC" rel="stylesheet">
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Carrois Gothic SC', sans-serif;
+    }
+    h1,h2,h3,h4 {
+        margin: 0;
+        line-height: 70px;
+    }
+    .card .card-content .card-title {
+        margin-bottom: 0;
+    }
+    body {
+        background: red; /* For browsers that do not support gradients */
+        background: linear-gradient(-90deg, teal, cyan); /* Standard */
+    }
+</style>
+<body>
+    <div class="container">
+        <div class="row" style="margin-top:100px;">
+            <div class="col s8">
+                <h4 class="cyan-text text-lighten-5">Check the weather in your City</h4>
+                <div class="input-field" style="margin-top:20px;">
+                <input type="text" id="city" class="validate">
+                <label for="city" class="center-align">Enter City</label>
+                </div>
+                <button class="waves-effect cyan darken-4 btn-large pulse" id="get-forecast"><i class="material-icons left">cloud</i>Get Forecast</button>
+                        <table>
+                <thead>
+                </thead>
+                <tbody class="show-forecast">
+                </tbody>
+            </table>
+            </div> 
+            <div class="col s4">
+                <div class="row">
+                    <div class="card cyan darken-4 z-depth-5">
+                        <div class="card-content white-text">
+                        <span class="card-title">
+                            <strong>
+                            <h3 class="center-align" id="getMonth"></h3>
+                            <h1 class="center-align" id="getDay"></h1>
+                            <h3 class="center-align" id="getYear"></h3>
+                            </strong>                    
+                        </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="card cyan darken-4 z-depth-5">
+                        <div class="card-content white-text">
+                        <span class="card-title">
+                            <strong>
+                            <h4 class="center-align" id="time"></h4>                          
+                            </strong>                    
+                        </span>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                        <a class="github-button" href="https://github.com/johnray016" data-show-count="true" aria-label="Follow @johnray016 on GitHub">Follow @johnray016</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- Compiled and minified JavaScript -->
+    <script defer src="https://use.fontawesome.com/releases/v5.0.9/js/all.js" integrity="sha384-8iPTk2s/jMVj81dnzb/iFR2sdA7u06vHJyyLlAd4snFpCl/SnyUjRrbdJsw1pGIl" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>    
+     <!-- Place this tag in your head or just before your close body tag. -->
+     <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('#get-forecast').click(function(){
+                var city = $('#city').val();
+                var key = '7619f555338e1a8f8c296ad23425699a';
+
+                $.ajax({
+                    url: 'http://api.openweathermap.org/data/2.5/weather',
+                    dataType: 'json',
+                    type: 'GET',
+                    data:{
+                        q: city,
+                        appid: key,
+                        units: 'metric'
+                    },
+                    success: function(data){
+                        var forecast = '';
+                        $.each(data.weather, function(index, val){
+                            forecast += "<tr><td><img class='right' src=http://openweathermap.org/img/w/" + val.icon + ".png></td><td><h5>"  + 
+                                data.name + " <img src=http://openweathermap.org/images/flags/" + data.sys.country.toLowerCase() + ".png>" + ' | <small>' + val.description + "</small></h5>"
+                                + "<span class='blue darken-1 white-text' style='padding:0 10px; border-radius:10px;'>" + data.main.temp + '&deg;C</span>' + 
+                                " wind: " + data.wind.speed + " m/s, clouds: " +  data.clouds.all + " %, Pressure: " + data.main.pressure + " hpa"                            
+                            + "<tr>"
+                        });    
+                    $('.show-forecast').html(forecast);
+                    }
+                });
+            });
+
+
+            function todayDate() {
+                /* Creating a Date Obj */
+                var date = new Date();
+                /* Get Day, Month and Year */
+                var day = date.getDate();
+                var month = date.getMonth();
+                var year = date.getFullYear();
+                
+                 /* Month Array */
+                var monthArr = new Array();
+                    monthArr[0] = "Jan";
+                    monthArr[1] = "Feb";
+                    monthArr[2] = "Mar";
+                    monthArr[3] = "Apr";
+                    monthArr[4] = "May";
+                    monthArr[5] = "Jun";
+                    monthArr[6] = "Jul";
+                    monthArr[7] = "Aug";
+                    monthArr[8] = "Sep";
+                    monthArr[9] = "Oct";
+                    monthArr[10] = "Nov";
+                    monthArr[11] = "Dec";
+                var getMonthArr = monthArr[month];
+
+
+                /* Output the Date */
+                $('#getMonth').html(getMonthArr);
+                $('#getDay').html(day);
+                $('#getYear').html(year);
+             }
+             todayDate();   
+
+
+            /* Get Time */
+            function startTime() {
+                /* Creating a Time Obj */
+                var today = new Date();
+                /* Get Hours, Minutes and Seconds */
+                var h = today.getHours();
+                var m = today.getMinutes();
+                var s = today.getSeconds();
+                m = checkTime(m);
+                s = checkTime(s);
+                $('#time').html(h + ":" + m + ":" + s);
+                var t = setTimeout(startTime, 500);
+            }
+            function checkTime(i) {
+                if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
+                return i;
+            }            
+            startTime()
+
+
+            $.ajax({
+                url: 'https://api.github.com/users/johnray016/followers',
+                dataType: 'json',
+                type: 'GET',
+                success: function(data){   
+                    $('#followers').html(data.length);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
